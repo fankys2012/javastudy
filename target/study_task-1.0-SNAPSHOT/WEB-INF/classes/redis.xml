@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder location="classpath:properties/redis.properties" />
+    <bean id="genericObjectPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxIdle" value="100" />
+        <property name="minIdle" value="5" />
+        <property name="maxTotal" value="1000" />
+        <property name="maxWaitMillis" value="3000" />
+    </bean>
+
+
+
+    <bean id="jedisClient" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" lazy-init="true">
+        <property name="poolConfig" ref="genericObjectPoolConfig" />
+        <property name="hostName" value="${redis.host}" />
+        <property name="port" value="${redis.port}" />
+        <property name="password" value="#{'${redis.password}' == '' ? null : '${redis.password}'}" />
+        <property name="timeout" value="${redis.timeout}" />
+    </bean>
+    <!--<bean id="jedisClient" class="redis.clients.jedis.JedisCluster" lazy-init="true">-->
+        <!--<constructor-arg name="jedisClusterNode">-->
+            <!--<set>-->
+                <!--<bean class="redis.clients.jedis.HostAndPort">-->
+                    <!--<constructor-arg index="0" value="${redis.host}"/>-->
+                    <!--<constructor-arg index="1" value="${redis.port}"/>-->
+                <!--</bean>-->
+
+            <!--</set>-->
+        <!--</constructor-arg>-->
+        <!--<constructor-arg name="connectionTimeout" value="2000"/>-->
+        <!--<constructor-arg name="soTimeout" value="2000"/>-->
+        <!--<constructor-arg name="maxAttempts" value="5"/>-->
+        <!--<constructor-arg name="password" value="#{'${redis.password}' == '' ? null : '${redis.password}'}" />-->
+        <!--<constructor-arg name="poolConfig" ref="genericObjectPoolConfig"/>-->
+    <!--</bean>-->
+
+    <bean id="ApplicationContextUtil" class="com.starcor.util.ApplicationContextUtil"/>
+
+    <bean name="redisCacheUtil" class="com.starcor.util.RedisCacheUtil">
+        <property name="jedisClusterName" value="jedisClient" />
+        <property name="applicationContext" value="#{ApplicationContextUtil.applicationContext}"/>
+    </bean>
+
+    <bean id="jedis" class="com.starcor.util.JedisClient" />
+
+</beans>

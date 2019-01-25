@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starcor.dao.UserDao">
+    <!--设置domain类和数据库中表的字段一一对应，注意数据库字段和domain类中的字段名称不致，此处一定要！-->
+    <resultMap id="BaseResultMap" type="com.starcor.entity.User">
+        <id column="uid" property="uid" jdbcType="INTEGER" />
+        <result column="uname" property="uname" jdbcType="CHAR" />
+        <result column="utoken" property="utoken" jdbcType="CHAR" />
+        <result column="createTime" property="createTime"/>
+    </resultMap>
+    <!-- 查询单条记录 -->
+    <!--<select id="selectUserById" parameterType="int" resultMap="BaseResultMap">-->
+        <!--SELECT * FROM t_user WHERE USER_ID = #{userId}-->
+    <!--</select>-->
+
+    <!-- 根据用户名查询 -->
+    <select id="findByUserName" resultType="com.starcor.entity.User">
+        select * from user where uname=#{uname}
+    </select>
+
+    <select id="findByUserId" resultType="com.starcor.entity.User">
+        select * from user where uid=#{userId}
+    </select>
+
+    <!-- 增加用户 -->
+    <insert id="addUser" parameterType="com.starcor.entity.User">
+        insert into user(uname,upwd,createTime) values(#{uname},#{upwd},#{createTime})
+    </insert>
+
+    <update id="editUser" parameterType="com.starcor.entity.User">
+        UPDATE user set
+--         <if test="uname != null ">
+            uname = #{uname},
+--         </if>
+        <!--<if test="upwd != null ">-->
+            upwd = #{upwd},
+        <!--</if>-->
+        <!--<if test="createTime != null ">-->
+            create_time = #{createTime}
+        <!--</if>-->
+        where uid = #{uid}
+    </update>
+
+    <delete id="delUser">
+        delete from user where uid=#{userId}
+    </delete>
+
+    <select id="queryAllUser" resultMap="BaseResultMap">
+        select uid,uname FROM user
+    </select>
+
+
+</mapper>
